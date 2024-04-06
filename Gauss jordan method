@@ -1,0 +1,63 @@
+#include <iostream>
+#include <iomanip>
+
+const int MAX_SIZE = 10;
+
+void gaussJordanElimination(double mat[MAX_SIZE][MAX_SIZE + 1], int n) {
+    for (int i = 0; i < n; i++) {
+        // Partial pivoting
+        int maxRow = i;
+        for (int k = i + 1; k < n; k++) {
+            if (std::abs(mat[k][i]) > std::abs(mat[maxRow][i])) {
+                maxRow = k;
+            }
+        }
+        for (int k = i; k <= n; k++) {
+            std::swap(mat[maxRow][k], mat[i][k]);
+        }
+
+        // Make all elements except the diagonal in the current row equal to zero
+        for (int k = 0; k < n; k++) {
+            if (k != i) {
+                double factor = mat[k][i] / mat[i][i];
+                for (int j = i; j <= n; j++) {
+                    mat[k][j] -= factor * mat[i][j];
+                }
+            }
+        }
+    }
+
+    // Normalize the rows to get the final solution
+    for (int i = 0; i < n; i++) {
+        double divisor = mat[i][i];
+        for (int j = 0; j <= n; j++) {
+            mat[i][j] /= divisor;
+        }
+    }
+
+    // Print the solution
+    std::cout << "Solution:\n";
+    for (int i = 0; i < n; i++) {
+        std::cout << "x[" << i << "] = " << std::fixed << std::setprecision(2) << mat[i][n] << "\n";
+    }
+}
+
+int main() {
+    int n;
+    double mat[MAX_SIZE][MAX_SIZE + 1];
+
+    std::cout << "Enter the number of variables in the system: ";
+    std::cin >> n;
+
+    std::cout << "Enter the augmented matrix (coefficients and constants):\n";
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j <= n; j++) {
+            std::cout << "mat[" << i << "][" << j << "]: ";
+            std::cin >> mat[i][j];
+        }
+    }
+
+    gaussJordanElimination(mat, n);
+
+    return 0;
+}
